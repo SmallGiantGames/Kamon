@@ -184,11 +184,24 @@ class LogReporterSubscriber extends Actor with ActorLogging {
         |"""
         .stripMargin.format(
           name, tms.elapsedTime.numberOfMeasurements))
-
     traceMetricsData.append(compactHistogramView(tms.elapsedTime))
+
+    tms.segments foreach {
+      case (segment, snapshot) ⇒
+        traceMetricsData.append(
+          """
+        |+--------------------------------------------------------------------------------------------------+
+        ||    Segment: %-81s    |
+        ||    Count: %-8s                                                                               |
+        ||  Elapsed Time (nanoseconds):                                                                     |
+        |"""
+            .stripMargin.format(
+              segment.name, snapshot.numberOfMeasurements))
+        traceMetricsData.append(compactHistogramView(snapshot))
+    }
+
     traceMetricsData.append(
       """
-        ||                                                                                                  |
         |+--------------------------------------------------------------------------------------------------+"""
         .stripMargin)
 
