@@ -211,6 +211,12 @@ class LogReporterSubscriber extends Actor with ActorLogging {
   def logUserMetrics(histograms: Map[MetricGroupIdentity, Histogram.Snapshot],
     counters: Map[MetricGroupIdentity, Counter.Snapshot], minMaxCounters: Map[MetricGroupIdentity, Histogram.Snapshot],
     gauges: Map[MetricGroupIdentity, Histogram.Snapshot]): Unit = {
+
+    if (histograms.isEmpty && counters.isEmpty && minMaxCounters.isEmpty && gauges.isEmpty) {
+      log.info("No user metrics")
+      return
+    }
+
     val userMetricsData = StringBuilder.newBuilder
 
     userMetricsData.append(
